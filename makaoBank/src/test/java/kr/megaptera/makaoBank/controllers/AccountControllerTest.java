@@ -50,4 +50,6 @@ class AccountControllerTest {
     mockMvc.perform(MockMvcRequestBuilders.get("/accounts/me"))
         .andExpect(status().isNotFound());
   }
+
+
 }

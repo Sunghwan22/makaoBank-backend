@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("backdoor")
@@ -20,6 +21,7 @@ public class BackdoorController {
 
   @GetMapping("setup-database")
   public String setupDatabase() {
+    LocalDateTime now = LocalDateTime.now();
     //Todo setup database
 
     // 1.기존 데이터 삭제
@@ -29,14 +31,18 @@ public class BackdoorController {
     // 5. 데이터 추가 -> record , row -> INSERT account(id,name,accountNumber,amount)VALUES("Tester"...나머지들)
     jdbcTemplate.execute("DELETE FROM account");
 
-    jdbcTemplate.execute("" +
-        "INSERT INTO account(id, name, account_number, amount)" +
-        " VALUES(1, 'Tester', '1234', 123000) "
+    jdbcTemplate.update("" +
+            "INSERT INTO account(id, name, account_number, amount, created_at, updated_at" +
+            ")" +
+            " VALUES(1, 'Tester', '1234', 123000, ? , ?) ",
+        now, now
     );
 
-    jdbcTemplate.execute("" +
-        "INSERT INTO account(id, name, account_number, amount)" +
-        " VALUES(2, 'sunghwan', '1234567890', 100000000) "
+    jdbcTemplate.update("" +
+            "INSERT INTO account(id, name, account_number, amount, created_at, updated_at" +
+            ")" +
+            " VALUES(2, 'sunghwan', '1234567890', 50000000, ? , ?) ",
+        now, now
     );
 
     return "OK";
