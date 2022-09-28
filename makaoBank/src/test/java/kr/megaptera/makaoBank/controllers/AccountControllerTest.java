@@ -2,6 +2,7 @@ package kr.megaptera.makaoBank.controllers;
 
 import kr.megaptera.makaoBank.exceptions.AccountNotFound;
 import kr.megaptera.makaoBank.models.Account;
+import kr.megaptera.makaoBank.models.AccountNumber;
 import kr.megaptera.makaoBank.repositoies.AccountRepository;
 import kr.megaptera.makaoBank.services.AccountService;
 import org.junit.jupiter.api.Test;
@@ -44,12 +45,10 @@ class AccountControllerTest {
   @Test
   void accountNotFound() throws Exception {
     given(accountService.detail(any()))
-        .willThrow(new AccountNotFound("1234"));
+        .willThrow(new AccountNotFound(new AccountNumber("1234")));
 
 
     mockMvc.perform(MockMvcRequestBuilders.get("/accounts/me"))
         .andExpect(status().isNotFound());
   }
-
-
 }

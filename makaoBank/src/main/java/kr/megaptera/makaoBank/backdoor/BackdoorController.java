@@ -32,16 +32,18 @@ public class BackdoorController {
     jdbcTemplate.execute("DELETE FROM account");
 
     jdbcTemplate.update("" +
-            "INSERT INTO account(id, name, account_number, amount, created_at, updated_at" +
-            ")" +
-            " VALUES(1, 'Tester', '1234', 123000, ? , ?) ",
+            "INSERT INTO account(" +
+            "id, name, account_number, amount, " +
+            "created_at, updated_at)" +
+            " VALUES(1, 'tester', '1234', 100000, ?, ?)",
         now, now
     );
 
     jdbcTemplate.update("" +
-            "INSERT INTO account(id, name, account_number, amount, created_at, updated_at" +
-            ")" +
-            " VALUES(2, 'sunghwan', '1234567890', 50000000, ? , ?) ",
+            "INSERT INTO account(" +
+            "id, name, account_number, amount, " +
+            "created_at, updated_at)" +
+            " VALUES(2, 'sunghwan', '1234567890', 500000, ?, ?)",
         now, now
     );
 

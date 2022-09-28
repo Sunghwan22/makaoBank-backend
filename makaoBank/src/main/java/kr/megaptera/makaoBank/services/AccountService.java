@@ -2,6 +2,7 @@ package kr.megaptera.makaoBank.services;
 
 import kr.megaptera.makaoBank.exceptions.AccountNotFound;
 import kr.megaptera.makaoBank.models.Account;
+import kr.megaptera.makaoBank.models.AccountNumber;
 import kr.megaptera.makaoBank.repositoies.AccountRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class AccountService {
     this.accountRepository = accountRepository;
   }
 
-  public Account detail(String accountNumber) {
+  public Account detail(AccountNumber accountNumber) {
     return accountRepository.findByAccountNumber(accountNumber)
         .orElseThrow(() -> new AccountNotFound(accountNumber));
   }

@@ -3,6 +3,7 @@ package kr.megaptera.makaoBank.controllers;
 import kr.megaptera.makaoBank.dtos.AccountDto;
 import kr.megaptera.makaoBank.exceptions.AccountNotFound;
 import kr.megaptera.makaoBank.models.Account;
+import kr.megaptera.makaoBank.models.AccountNumber;
 import kr.megaptera.makaoBank.services.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,7 +25,9 @@ public class AccountController {
 
   @GetMapping("/me")
   public AccountDto account() {
-    Account account = accountService.detail("1234");
+    // Todo 인증 정보 활용
+    AccountNumber accountNumber = new AccountNumber("1234");
+    Account account = accountService.detail(accountNumber);
     return account.toDto();
   }
 

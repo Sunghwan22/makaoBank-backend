@@ -7,6 +7,9 @@ public class TransferResultDto {
     this.transferred = amount;
   }
 
+  public TransferResultDto() {
+  }
+
   public Long getTransferred() {
     return transferred;
   }

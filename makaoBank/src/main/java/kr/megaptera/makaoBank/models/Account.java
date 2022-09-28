@@ -1,10 +1,11 @@
 package kr.megaptera.makaoBank.models;
 
 import kr.megaptera.makaoBank.dtos.AccountDto;
-import kr.megaptera.makaoBank.services.IncorrectAmount;
+import kr.megaptera.makaoBank.exceptions.IncorrectAmount;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,7 +17,8 @@ public class Account {
   @GeneratedValue
   private Long id;
 
-  private String accountNumber;
+  @Embedded
+  private AccountNumber accountNumber;
 
   private String name;
 
@@ -31,20 +33,20 @@ public class Account {
   public Account() {
   }
 
-  public Account(Long id, String accountNumber, String name, Long amount) {
+  public Account(Long id, AccountNumber accountNumber, String name, Long amount) {
     this.id = id;
     this.accountNumber = accountNumber;
     this.name = name;
     this.amount = amount;
   }
 
-  public Account(String accountNumber, String name) {
+  public Account(AccountNumber accountNumber, String name) {
     this.accountNumber = accountNumber;
     this.name = name;
     this.amount = 0L;
   }
 
-  public String accountNumber() {
+  public AccountNumber accountNumber() {
     return accountNumber;
   }
 
@@ -62,10 +64,10 @@ public class Account {
   }
 
   public AccountDto toDto() {
-    return new AccountDto(accountNumber, name, amount);
+    return new AccountDto(accountNumber.value(), name, amount);
   }
 
   public static Account fake(String accountNumber) {
-    return new Account(1L, accountNumber, "Tester", 100L);
+    return new Account(1L, new AccountNumber(accountNumber), "Tester", 100L);
   }
 }

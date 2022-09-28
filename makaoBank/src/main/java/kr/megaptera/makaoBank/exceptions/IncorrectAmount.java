@@ -1,4 +1,4 @@
-package kr.megaptera.makaoBank.services;
+package kr.megaptera.makaoBank.exceptions;
 
 public class IncorrectAmount extends RuntimeException {
   public IncorrectAmount(Long amount) {

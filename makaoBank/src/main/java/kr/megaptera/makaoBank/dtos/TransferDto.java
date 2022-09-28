@@ -10,6 +10,9 @@ public class TransferDto {
   @NotNull
   private Long amount;
 
+  @NotBlank
+  private String name;
+
   public TransferDto(String to, Long amount) {
     this.to = to;
     this.amount = amount;
@@ -21,5 +24,9 @@ public class TransferDto {
 
   public Long getAmount() {
     return amount;
+  }
+
+  public String getName() {
+    return name;
   }
 }
