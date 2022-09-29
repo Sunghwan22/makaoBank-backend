@@ -1,7 +1,5 @@
 package kr.megaptera.makaoBank.dtos;
 
-import java.util.List;
-
 public class TransactionDto {
   private Long id;
 

@@ -11,7 +11,6 @@ import javax.transaction.Transactional;
 @Service
 @Transactional
 public class AccountService {
-
   private final AccountRepository accountRepository;
 
   public AccountService(AccountRepository accountRepository) {

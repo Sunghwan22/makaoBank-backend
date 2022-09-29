@@ -7,10 +7,12 @@ import kr.megaptera.makaoBank.repositoies.TransactionRepository;
 import kr.megaptera.makaoBank.exceptions.IncorrectAmount;
 import kr.megaptera.makaoBank.services.TransactionService;
 import kr.megaptera.makaoBank.services.TransferService;
+import kr.megaptera.makaoBank.utils.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,38 +45,49 @@ class TransactionControllerTest {
   @MockBean
   private TransactionRepository transactionRepository;
 
+  @SpyBean
+  private JwtUtil jwtUtil;
+
   @Test
   void list() throws Exception {
     Transaction transaction = mock(Transaction.class);
 
     AccountNumber accountNumber = new AccountNumber("1234");
 
+    String accessToken = jwtUtil.encode(new AccountNumber("1234"));
+
     given(transactionService.list(accountNumber, 1))
         .willReturn(List.of(transaction));
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/transactions"))
-        .andExpect(MockMvcResultMatchers.status().isOk());
-//        .andExpect(content().string(
-//            containsString("\"transactions\":[")
-//        ));
+    mockMvc.perform(MockMvcRequestBuilders.get("/transactions")
+            .header("Authorization", "Bearer " + accessToken))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().string(
+            containsString("\"transactions\":[")
+        ));
 
     verify(transactionService).list(accountNumber, 1);
   }
 
   @Test
   void transfer() throws Exception {
+
+
+    String accessToken = jwtUtil.encode(new AccountNumber("1234"));
+
     AccountNumber sender = new AccountNumber("1234");
     AccountNumber receiver = new AccountNumber("5678");
     String name = "Test";
 
     mockMvc.perform(MockMvcRequestBuilders.post("/transactions")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{" +
-                "\"to\":\"" + receiver.value() + "\"," +
-                "\"amount\":100000" + "," +
-                "\"name\":\"Test\"" +
-                "}"))
+            .header("Authorization", "Bearer " + accessToken)
+        .accept(MediaType.APPLICATION_JSON)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{" +
+            "\"to\":\"" + receiver.value() + "\"," +
+            "\"amount\":100000" + "," +
+            "\"name\":\"Test\"" +
+            "}"))
         .andExpect(status().isCreated());
 
     verify(transferService).transfer(sender, receiver, 100_000L, name);
@@ -82,12 +95,15 @@ class TransactionControllerTest {
 
   @Test
   void transferWithIncorrectAmount() throws Exception {
+    String accessToken = jwtUtil.encode(new AccountNumber("1234"));
+
     Long amount = -100_000L;
 
     given(transferService.transfer(any(), any(), any(), any()))
         .willThrow(new IncorrectAmount(amount));
 
     mockMvc.perform(MockMvcRequestBuilders.post("/transactions")
+            .header("Authorization", "Bearer " + accessToken)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content("" +
@@ -102,12 +118,15 @@ class TransactionControllerTest {
 
   @Test
   void transferWithIncorrectAmountNumber() throws Exception {
+    String accessToken = jwtUtil.encode(new AccountNumber("1234"));
+
     AccountNumber accountNumber = new AccountNumber("5678");
 
     given(transferService.transfer(any(), any(), any(), any()))
         .willThrow(new AccountNotFound(accountNumber));
 
     mockMvc.perform(MockMvcRequestBuilders.post("/transactions")
+            .header("Authorization", "Bearer " + accessToken)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content("" +

@@ -4,6 +4,7 @@ import kr.megaptera.makaoBank.dtos.AccountDto;
 import kr.megaptera.makaoBank.exceptions.IncorrectAmount;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -24,6 +25,8 @@ public class Account {
 
   private Long amount;
 
+  private String encodedPassword;
+
   @CreationTimestamp
   private LocalDateTime createdAt;
 
@@ -33,17 +36,18 @@ public class Account {
   public Account() {
   }
 
-  public Account(Long id, AccountNumber accountNumber, String name, Long amount) {
-    this.id = id;
-    this.accountNumber = accountNumber;
-    this.name = name;
-    this.amount = amount;
-  }
-
   public Account(AccountNumber accountNumber, String name) {
     this.accountNumber = accountNumber;
     this.name = name;
     this.amount = 0L;
+  }
+
+  public Account(Long id, AccountNumber accountNumber,
+                 String name, Long amount) {
+    this.id = id;
+    this.accountNumber = accountNumber;
+    this.name = name;
+    this.amount = amount;
   }
 
   public AccountNumber accountNumber() {
@@ -54,7 +58,11 @@ public class Account {
     return amount;
   }
 
-  public void transferTo(Account other, Long amount) {
+  public String name() {
+    return name;
+  }
+
+  public void transfer(Account other, Long amount) {
     if (amount <= 0 || this.amount < amount) {
       throw new IncorrectAmount(amount);
     }
@@ -63,11 +71,19 @@ public class Account {
     other.amount += amount;
   }
 
-  public AccountDto toDto() {
-    return new AccountDto(accountNumber.value(), name, amount);
-  }
-
   public static Account fake(String accountNumber) {
     return new Account(1L, new AccountNumber(accountNumber), "Tester", 100L);
+  }
+
+  public boolean authenticate(String password, PasswordEncoder passwordEncoder) {
+    return passwordEncoder.matches(password, encodedPassword);
+  }
+
+  public void changePassword(String password, PasswordEncoder passwordEncoder) {
+    encodedPassword = passwordEncoder.encode(password);
+  }
+
+  public AccountDto toDto() {
+    return new AccountDto(accountNumber.value(), name, amount);
   }
 }

@@ -25,8 +25,8 @@ public class TransactionService {
 
     Pageable pageable = PageRequest.of(page - 1, 100, sort);
 
-    return transactionRepository.findAllBySenderOrReceiver(
-        accountNumber, accountNumber, pageable
-    );
+    return transactionRepository
+        .findAllBySenderOrReceiver(
+            accountNumber, accountNumber, pageable);
   }
 }

@@ -5,6 +5,7 @@ import kr.megaptera.makaoBank.models.Account;
 import kr.megaptera.makaoBank.models.AccountNumber;
 import kr.megaptera.makaoBank.repositoies.AccountRepository;
 import kr.megaptera.makaoBank.services.AccountService;
+import kr.megaptera.makaoBank.utils.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,13 +30,18 @@ class AccountControllerTest {
   @Autowired
   private MockMvc mockMvc;
 
+  @SpyBean
+  private JwtUtil jwtUtil;
+
   @Test
   void account() throws Exception {
     given(accountService.detail(any()))
         .willReturn(Account.fake("1234"));
 
+    String accessToken = jwtUtil.encode(new AccountNumber("1234"));
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/accounts/me"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/accounts/me")
+            .header("Authorization", "Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(content().string(
             containsString("\"accountNumber\":\"1234\"")
@@ -47,8 +53,21 @@ class AccountControllerTest {
     given(accountService.detail(any()))
         .willThrow(new AccountNotFound(new AccountNumber("1234")));
 
+    String accessToken = jwtUtil.encode(new AccountNumber("1234"));
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/accounts/me")
+            .header("Authorization", "Bearer " + accessToken))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void accountWithOutAccessToken() throws Exception {
+    given(accountService.detail(any()))
+        .willThrow(new AccountNotFound(new AccountNumber("1234")));
+
+    String accessToken = jwtUtil.encode(new AccountNumber("1234"));
 
     mockMvc.perform(MockMvcRequestBuilders.get("/accounts/me"))
-        .andExpect(status().isNotFound());
+        .andExpect(status().isBadRequest());
   }
 }

@@ -20,11 +20,17 @@ public class Transaction {
 
   @Embedded
   @AttributeOverride(name = "value", column = @Column(name = "sender"))
-  private AccountNumber sender; // account number
+  private AccountNumber sender;
 
   @Embedded
   @AttributeOverride(name = "value", column = @Column(name = "receiver"))
-  private AccountNumber receiver; // accountNumber
+  private AccountNumber receiver;
+
+  @CreationTimestamp
+  private LocalDateTime createdAt;
+
+  @UpdateTimestamp
+  private LocalDateTime updatedAt;
 
   private Long amount;
 
@@ -32,12 +38,6 @@ public class Transaction {
 
   public Transaction() {
   }
-
-  @CreationTimestamp
-  private LocalDateTime createdAt;
-
-  @UpdateTimestamp
-  private LocalDateTime updatedAt;
 
   public Transaction(
       AccountNumber sender, AccountNumber receiver, Long amount, String name) {
@@ -49,14 +49,16 @@ public class Transaction {
 
   public TransactionDto toDto(AccountNumber currentAccountNumber) {
     return new TransactionDto(
-        id, activity(currentAccountNumber), name(currentAccountNumber), amount
+        id,
+        activity(currentAccountNumber),
+        name(currentAccountNumber),
+        amount
     );
   }
 
   public String activity(AccountNumber currentAccountNumber) {
     return currentAccountNumber.equals(sender) ? "송금" : "입금";
   }
-
 
   public String name(AccountNumber currentAccountNumber) {
     return currentAccountNumber.equals(sender) ? receiver.value() : name;
