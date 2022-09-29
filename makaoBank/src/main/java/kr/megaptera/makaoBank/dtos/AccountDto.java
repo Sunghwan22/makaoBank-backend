@@ -13,6 +13,9 @@ public class AccountDto {
     this.amount = amount;
   }
 
+  public AccountDto() {
+  }
+
   public String getAccountNumber() {
     return accountNumber;
   }

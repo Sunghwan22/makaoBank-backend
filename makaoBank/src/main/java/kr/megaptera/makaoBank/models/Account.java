@@ -1,5 +1,6 @@
 package kr.megaptera.makaoBank.models;
 
+import kr.megaptera.makaoBank.dtos.AccountCreatedDto;
 import kr.megaptera.makaoBank.dtos.AccountDto;
 import kr.megaptera.makaoBank.exceptions.IncorrectAmount;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,7 +18,7 @@ public class Account {
   @Id
   @GeneratedValue
   private Long id;
-
+ // 테이블
   @Embedded
   private AccountNumber accountNumber;
 
@@ -50,6 +51,12 @@ public class Account {
     this.amount = amount;
   }
 
+  public Account(Long id, String name, AccountNumber accountNumber) {
+    this.id = id;
+    this.name = name;
+    this.accountNumber = accountNumber;
+  }
+
   public AccountNumber accountNumber() {
     return accountNumber;
   }
@@ -60,6 +67,10 @@ public class Account {
 
   public String name() {
     return name;
+  }
+
+  public String encodedPassword() {
+    return encodedPassword;
   }
 
   public void transfer(Account other, Long amount) {
@@ -85,5 +96,9 @@ public class Account {
 
   public AccountDto toDto() {
     return new AccountDto(accountNumber.value(), name, amount);
+  }
+
+  public AccountCreatedDto toCreatedDto() {
+    return new AccountCreatedDto(accountNumber.value(), name);
   }
 }

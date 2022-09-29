@@ -10,6 +10,9 @@ public class LoginRequestDto {
     this.password = password;
   }
 
+  public LoginRequestDto() {
+  }
+
   public String getAccountNumber() {
     return accountNumber;
   }

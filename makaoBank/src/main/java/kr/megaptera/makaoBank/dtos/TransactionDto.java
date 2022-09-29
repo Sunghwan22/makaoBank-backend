@@ -19,6 +19,7 @@ public class TransactionDto {
     this.amount = amount;
   }
 
+
   public Long getId() {
     return id;
   }

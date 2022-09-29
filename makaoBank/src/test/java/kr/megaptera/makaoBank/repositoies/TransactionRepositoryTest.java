@@ -13,14 +13,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.atMost;
-import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @ActiveProfiles("test")

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -32,6 +33,9 @@ class AccountControllerTest {
 
   @SpyBean
   private JwtUtil jwtUtil;
+
+  @MockBean
+  private AccountRepository accountRepository;
 
   @Test
   void account() throws Exception {
@@ -68,6 +72,141 @@ class AccountControllerTest {
     String accessToken = jwtUtil.encode(new AccountNumber("1234"));
 
     mockMvc.perform(MockMvcRequestBuilders.get("/accounts/me"))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void register() throws Exception {
+    AccountNumber accountNumber = new AccountNumber("1234");
+
+    given(accountService.create(any())).willReturn(new Account(
+        1L, "Tester", accountNumber
+    ));
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/accounts/user")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"name\":\"제로콜라\"," +
+                "\"accountNumber\":\"12345678\"," +
+                "\"password\":\"Tjdghks24535!\"," +
+                "\"passwordConfirm\":\"Tjdghks24535!\"" +
+                "}"))
+        .andExpect(status().isCreated());
+  }
+
+  @Test
+  void registerWithInvalidNameFormat() throws Exception {
+    AccountNumber accountNumber = new AccountNumber("1234");
+
+    given(accountService.create(any())).willReturn(new Account(
+        1L, "Tester", accountNumber
+    ));
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/accounts/user")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"name\":\"Tester\"," +
+                "\"accountNumber\":\"12345678\"," +
+                "\"password\":\"Tjdghks24535!\"," +
+                "\"passwordConfirm\":\"Tjdghks24535!\"" +
+                "}"))
+        .andExpect(status().isBadRequest());
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/accounts/user")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"name\":\"콜라\"," +
+                "\"accountNumber\":\"12345678\"," +
+                "\"password\":\"Tjdghks24535!\"," +
+                "\"passwordConfirm\":\"Tjdghks24535!\"" +
+                "}"))
+        .andExpect(status().isBadRequest());
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/accounts/user")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"name\":\"제로콜라진짜너무맛있다\"," +
+                "\"accountNumber\":\"12345678\"," +
+                "\"password\":\"Tjdghks24535!\"," +
+                "\"passwordConfirm\":\"Tjdghks24535!\"" +
+                "}"))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void registerWithInvaildAccountNumber() throws Exception {
+    AccountNumber accountNumber = new AccountNumber("1234");
+
+    given(accountService.create(any())).willReturn(new Account(
+        1L, "Tester", accountNumber
+    ));
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/accounts/user")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"name\":\"제로콜라\"," +
+                "\"accountNumber\":\"이건 아니지않나요\"," +
+                "\"password\":\"Tjdghks24535!\"," +
+                "\"passwordConfirm\":\"Tjdghks24535!\"" +
+                "}"))
+        .andExpect(status().isBadRequest());
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/accounts/user")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"name\":\"제로콜라\"," +
+                "\"accountNumber\":\"12345678900\"," +
+                "\"password\":\"Tjdghks24535!\"," +
+                "\"passwordConfirm\":\"Tjdghks24535!\"" +
+                "}"))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void registerWithInvalidPassword() throws Exception {
+    AccountNumber accountNumber = new AccountNumber("1234");
+
+    given(accountService.create(any())).willReturn(new Account(
+        1L, "Tester", accountNumber
+    ));
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/accounts/user")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"name\":\"제로콜라\"," +
+                "\"accountNumber\":\"12345678\"," +
+                "\"password\":\"Tjdghks24535\"," +
+                "\"passwordConfirm\":\"Tjdghks24535\"" +
+                "}"))
+        .andExpect(status().isBadRequest());
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/accounts/user")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"name\":\"제로콜라\"," +
+                "\"accountNumber\":\"12345678\"," +
+                "\"password\":\"tjdghks24535!\"," +
+                "\"passwordConfirm\":\"tjdghks24535!\"" +
+                "}"))
+        .andExpect(status().isBadRequest());
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/accounts/user")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"name\":\"제로콜라\"," +
+                "\"accountNumber\":\"12345678\"," +
+                "\"password\":\"Tjdghks24535!\"," +
+                "\"passwordConfirm\":\"Tjdghks24535\"" +
+                "}"))
         .andExpect(status().isBadRequest());
   }
 }

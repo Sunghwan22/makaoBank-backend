@@ -13,6 +13,9 @@ public class LoginResultDto {
     this.amount = amount;
   }
 
+  public LoginResultDto() {
+  }
+
   public String getAccessToken() {
     return accessToken;
   }

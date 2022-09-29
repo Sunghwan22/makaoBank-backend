@@ -8,12 +8,10 @@ import kr.megaptera.makaoBank.dtos.TransactionsDto;
 import kr.megaptera.makaoBank.dtos.TransferDto;
 import kr.megaptera.makaoBank.dtos.TransferResultDto;
 import kr.megaptera.makaoBank.exceptions.AccountNotFound;
-import kr.megaptera.makaoBank.models.AccountNumber;
-import kr.megaptera.makaoBank.models.Transaction;
 import kr.megaptera.makaoBank.exceptions.IncorrectAmount;
+import kr.megaptera.makaoBank.models.AccountNumber;
 import kr.megaptera.makaoBank.services.TransactionService;
 import kr.megaptera.makaoBank.services.TransferService;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -61,7 +59,6 @@ public class TransactionController {
       @RequestAttribute("accountNumber") AccountNumber sender,
       @Validated @RequestBody TransferDto transferDto
   ) {
-    // todo 인증후 제대로 처리할 것
     AccountNumber receiver = new AccountNumber(transferDto.getTo());
 
     Long amount = transferService.transfer(

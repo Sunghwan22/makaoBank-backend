@@ -64,9 +64,6 @@ public class BackdoorController {
   ) {
     //todo 잔액 변경
 
-    //데이터 수정은 UPDATE SET amount 123000
-    // sql inject??
-
     jdbcTemplate.update("UPDATE account SET amount=? WHERE id=? ", amount, userId);
 
     return "OK";
