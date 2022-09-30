@@ -3,9 +3,11 @@ package kr.megaptera.makaoBank.controllers;
 import kr.megaptera.makaoBank.dtos.AccountCreatedDto;
 import kr.megaptera.makaoBank.dtos.AccountDto;
 import kr.megaptera.makaoBank.dtos.AccountRegistrationDto;
+import kr.megaptera.makaoBank.dtos.AlreadyExistAccountNumberDto;
 import kr.megaptera.makaoBank.dtos.MismatchPasswordDto;
 import kr.megaptera.makaoBank.dtos.RegisterFailedDto;
 import kr.megaptera.makaoBank.exceptions.AccountNotFound;
+import kr.megaptera.makaoBank.exceptions.AlreadyExistAccountNumber;
 import kr.megaptera.makaoBank.exceptions.ConfirmPasswordMismatch;
 import kr.megaptera.makaoBank.models.Account;
 import kr.megaptera.makaoBank.models.AccountNumber;
@@ -64,6 +66,12 @@ public class AccountController {
     return new MismatchPasswordDto();
   }
 
+  @ExceptionHandler(AlreadyExistAccountNumber.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public AlreadyExistAccountNumberDto alreadyExistAccountNumber() {
+    return new AlreadyExistAccountNumberDto();
+  }
+
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public RegisterFailedDto registerFailed(MethodArgumentNotValidException exception) {
@@ -94,13 +102,6 @@ public class AccountController {
     if(message.equals("공백일 수 없습니다")) {
       code = 1008;
     }
-
-//    return switch (message) {
-//      case "3~7자리의 한글만 사용가능합니다" -> 1005;
-//      case "로그인 및 거래시 사용될 계좌번호이며 숫자만 사용 가능(8글자)" -> 1006;
-//      case "8글자 이상의 영문(대소문자),숫자,특수문자가 모두 포함되어야 합니다" -> 1007;
-//      case "공백일 수 없습니다" -> 1008;
-//    };
     return code;
   }
 }

@@ -9,6 +9,9 @@ public abstract class ErrorDto {
   public static final int INCORRECT_ACCOUNTNUMBER = 1006;
   public static final int INCORRECT_PASSWORD = 1007;
   public static final int BLANKINFORMATION = 1008;
+  public static final int ID_OR_PASSWORD_NOT_EQUAL = 1009;
+  public static final int ALREADY_EXIST_ACCOUNT_NUMBER = 1010;
+  public static final int LOGIN_INFORMATION_INCORRECT = 1011;
 
   private final Integer code;
 

@@ -3,6 +3,7 @@ package kr.megaptera.makaoBank.services;
 import kr.megaptera.makaoBank.dtos.AccountRegistrationDto;
 import kr.megaptera.makaoBank.exceptions.AccountNotFound;
 import kr.megaptera.makaoBank.exceptions.ConfirmPasswordMismatch;
+import kr.megaptera.makaoBank.exceptions.AlreadyExistAccountNumber;
 import kr.megaptera.makaoBank.models.Account;
 import kr.megaptera.makaoBank.models.AccountNumber;
 import kr.megaptera.makaoBank.repositoies.AccountRepository;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,7 +30,17 @@ public class AccountService {
   }
 
   public Account create(AccountRegistrationDto accountRegistrationDto) {
-    if(!(accountRegistrationDto.getPassword()
+    AccountNumber findAccountNumber =
+        new AccountNumber(accountRegistrationDto.getAccountNumber());
+
+    Optional<Account> findAccount = accountRepository.findByAccountNumber(findAccountNumber);
+
+    if(findAccount.isPresent()) {
+       throw new AlreadyExistAccountNumber();
+    }
+
+
+    if (!(accountRegistrationDto.getPassword()
         .equals(accountRegistrationDto.getConfirmPassword()))) {
       throw new ConfirmPasswordMismatch();
     }
